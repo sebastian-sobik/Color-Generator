@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color generator</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet"> 
+
+</head>
+<body>
+    <div class="bg-dimm"></div>
+    <div class="pop-up-message">
+        <div class="pop-up-message-color-box"></div>
+        <span>#F04444</span>
+    </div>
+    
+    <header class="color-block">
+        <div class="color"></div>
+    </header>
+
+    <section class="container-copy-add">
+        <button class="copy copy-add-button"><div class="icon icon-left"><img src="images/copy.svg" alt="copy color hex-code button"></div></div>
+        <button class="add copy-add-button"><div class="icon icon-right"><img src="images/add.svg" alt="add color to shelter button"></div></div>
+    </section>
+    <button class="button-generator">generate</button>
+
+   
+    <div class="sidebar sidebar-hidden">
+        <span class="sidebar-range"></span>
+        <div class="scrollable-flex">
+
+        </div>
+    </div>
+    <div class="toggle">
+        <img class="arrow-icon-toggle " src="images/arrow.svg" alt="">
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

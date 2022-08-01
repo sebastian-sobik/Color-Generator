@@ -1,0 +1,16 @@
+
+2. Przyciski [JS]
+	- [obiekt] shelter 
+		<?> tylko numery hex, czy {obiekty z kolorami}
+
+	- [obiekt] koloru [główny kwadrat]
+	- [obiekt] widoku
+
+
+3. Animacje
+	- generate 
+	- zamiana sub-button na dziubki
+	
+
+4. Inne 
+	- na przytrzymaniu przycisków nie ma się pojawiać pobieranie tego img

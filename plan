@@ -1,0 +1,48 @@
+
+[manager]
+{
+    const mainBlockHex = defaultColor;
+
+    1. GENERATE
+        - zresetowanie-toggled-buttons();
+        - generuje hex color
+        - [view] loadNewColor(hex)
+        - this.hex = hex;
+        - animacja buttonu
+
+    2. TOGGLE
+        - view.toggleSidebar();
+        -
+        -
+        
+    3. COPY
+        if(nie jest toggled){
+            - skopiowanie do schowka użytkownika
+            - view.displayCopiedColor(this.mainBlockHex);
+        }
+        - view.toggleLeftButton();
+
+    4. ADD 
+        // trochę będzie działać jak toggle, bo przecież można usunąć
+        if(!isCopyToggled())
+            - this.savedColors.push(hex)
+            - view.toggleAddButton();
+
+    5. randomHEX;
+
+}
+
+
+// Do zajmowania się sidebarem
+{
+
+    1. AddBlockColor(hex)
+    2. RemoveBlockColor(index)
+
+
+}
+
+[Główny blok]
+    - wartość hex
+
+[]
