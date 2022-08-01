@@ -57,7 +57,7 @@ document.querySelector(".color-block").addEventListener("animationend", ()=>{
 const defaultColor = "8370F4";
 
 // !
-// let staticIndex = 1;
+let staticIndex = 1;
 // !
 
 const creator = {
@@ -73,7 +73,7 @@ const creator = {
         outer.append(inner);
 
         // !
-        // inner.innerText = staticIndex++;
+        inner.innerText = staticIndex++;
         // !
 
         return outer;
@@ -282,18 +282,6 @@ const sidebarManager = {
 
     },
 
-    // loadSidebar() {
-    //     const upIndex   = this.colors.length - 1 ;
-    //     let downIndex = upIndex - this.displayLimit + 1;
-        
-    //     if(downIndex < 0) downIndex = 0;
-
-    //     this.updateIndexFirst(downIndex);
-    //     this.updateIndexLast(upIndex);
-
-    //     this.addBlockUsingRange(downIndex, upIndex, true);
-    // },
-
     // Gdy coś dodaliśmy i było scrollowane i jest więcej niż 50 elem to jest reset na początek
     resetSidebar(){
         const sidebar = document.querySelector(".scrollable-flex") ;
@@ -332,6 +320,10 @@ const sidebarManager = {
             sidebarManager.updateIndexLast(newLastIndex);
         }
 
+        if(sidebarManager.colors.length > sidebarManager.displayLimit)
+        {
+            program.moreThanDefault = true;
+        }
     },
 
     // Gdy jest więcej niż 50 elementów i scrollowaliśmy i nie dodaliśmy niczego za pomocą ADD()
@@ -341,13 +333,27 @@ const sidebarManager = {
         const sidebarElCount = sidebar.childElementCount;
 
         if(sidebarElCount > this.displayLimit){
-            for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
-                sidebar.firstChild.remove();
+            
+            if(program.scrolledDown && !program.scrolledUp){
+                for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
+                    sidebar.firstChild.remove();
 
-            this.updateIndexLast(this.indexOfFirstDisplayedColor + this.displayLimit - 1);
+                this.updateIndexLast(this.indexOfFirstDisplayedColor + this.displayLimit - 1);
+            }
+            else {
+                for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
+                    sidebar.lastChild.remove();
+
+                this.updateIndexFirst(this.indexOfFirstDisplayedColor + this.displayLimit - 1);
+            }
+
         }
 
     },
+
+    removeBlock() {
+
+    }
 
 
 
@@ -358,6 +364,9 @@ const program = {
     mainBlockHex : defaultColor,
     userAddedColor : false,
     isScrolled : false,
+    scrolledUp : false,
+    scrolledDown : false,
+    moreThanDefault: false,
 
     randomHex() {
         const digits = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'];
@@ -391,22 +400,15 @@ const program = {
     Add(){
         if(!view.getIsAddToggled()){
             const block = creator.createColorDiv(this.mainBlockHex);
-            
             view.toggleAddButton();
             sidebarManager.colors.push(block);
-
-            //!
-            for(let i = 0 ; i<50 ; i++)
-                sidebarManager.colors.push(creator.createColorDiv(this.randomHex()));
-
-            //!
-
             this.userAddedColor = true;
         }
         else{
             view.toggleAddButton();
             sidebarManager.colors.pop();
         }
+
     },
 
     CopyBlock(hex){
@@ -418,12 +420,21 @@ const program = {
     Toggle() {
         if(!view.getIsSidebarToggled()){
 
-            if(this.userAddedColor && this.isScrolled) {sidebarManager.resetSidebar(); this.userAddedColor = false;}
-            else if(this.userAddedColor) {sidebarManager.updateSidebar(); this.userAddedColor = false}
+            if(view.isAddToggled ){
+                document.querySelector(".button-generator").click();
+            }
+
+            if(this.userAddedColor && !this.moreThanDefault) {sidebarManager.updateSidebar(); this.userAddedColor = false}
+            else if(this.userAddedColor && this.isScrolled) {sidebarManager.resetSidebar(); this.userAddedColor = false;}
             else if(this.isScrolled) {sidebarManager.defaultSidebar(); this.isScrolled = false}
 
             view.toggleSidebar();
         }
+    },
+
+    scrollReset() {
+        this.scrolledDown = false;
+        this.scrolledUp = false;
     }
 
 }
@@ -441,3 +452,52 @@ document.querySelector(".add").addEventListener("click",
 ()=>{
     program.Add();
 })
+
+
+const delay = 300;
+const height = 300;
+const sidebar = document.querySelector(".scrollable-flex");
+let scrollTopGlobal = 0;
+let wait = false;
+
+sidebar.addEventListener("scroll", (e)=>{
+
+    const scrollTop = e.target.scrollTop;
+
+    if(!wait){
+        const scrollTopMax = e.target.scrollTopMax;
+        program.scrollReset();
+
+        if((scrollTop - scrollTopGlobal) > 0)
+        {
+            program.scrolledDown = true;
+            if((scrollTopMax-scrollTop) < height)
+            {
+                program.isScrolled = true;
+                sidebarManager.scrolledDown();
+                wait = true;
+                setTimeout(()=>{wait = false}, delay);
+            }
+        }
+        else {
+            program.scrolledUp = true;
+            if(scrollTop < height)
+            {
+                program.isScrolled = true;
+                sidebarManager.scrolledUp();
+                wait = true;
+                setTimeout(()=>{wait = false}, delay);
+            }
+        }
+
+    }
+
+    scrollTopGlobal = scrollTop;
+
+})
+
+
+const cheat = () => {
+    for(let i = 0 ; i<20 ; i++)
+        sidebarManager.colors.push(creator.createColorDiv(program.randomHex()));
+}
