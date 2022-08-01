@@ -1,5 +1,6 @@
 let isAnimating = false;
 
+
 new ClipboardJS('.copy');
 new ClipboardJS('.copyAPI');
 
@@ -72,6 +73,11 @@ const creator = {
         inner.style.backgroundColor = `#${hex}`;
         outer.append(inner);
 
+        inner.addEventListener("click",(el)=>{
+            const blockHex =  rgb2hex(el.target.style.backgroundColor).toUpperCase();
+            program.CopyBlock(blockHex);
+        })
+
         // !
         inner.innerText = staticIndex++;
         // !
@@ -87,7 +93,7 @@ const view = {
     isAddToggled : false,
     isSidebarToggled: false,    
 
-    //do zrobienia
+    // ! do zrobienia
     deleteClrSquareAnimation(colorSquare) {
 
     },
@@ -107,13 +113,11 @@ const view = {
         
         const leftButtonImg = document.querySelector(".icon-left img");
         
-        if(this.isCopyToggled){
-            leftButtonImg.setAttribute("src", "images/copy.svg")
-        }
-        else {
-            leftButtonImg.setAttribute("src", "images/check.svg")
-        }
-
+        if(this.isCopyToggled)
+            leftButtonImg.setAttribute("src", "images/copy.svg");
+        else 
+            leftButtonImg.setAttribute("src", "images/check.svg");
+        
         this.isCopyToggled = !this.isCopyToggled; 
 
     },
@@ -441,12 +445,6 @@ const program = {
 
 
 
-document.querySelectorAll(".block-inner").forEach((e)=>{
-    e.addEventListener("click",(el)=>{
-        const blockHex =  rgb2hex(el.target.style.backgroundColor).toUpperCase();
-        program.CopyBlock(blockHex);
-    })
-})
 
 document.querySelector(".add").addEventListener("click", 
 ()=>{
@@ -496,8 +494,3 @@ sidebar.addEventListener("scroll", (e)=>{
 
 })
 
-
-const cheat = () => {
-    for(let i = 0 ; i<20 ; i++)
-        sidebarManager.colors.push(creator.createColorDiv(program.randomHex()));
-}
