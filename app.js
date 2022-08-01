@@ -1,17 +1,22 @@
 let isAnimating = false;
 
+new ClipboardJS('.copy');
+new ClipboardJS('.copyAPI');
+
+const rgb2hex = (rgb) => `${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`
+
 document.querySelector(".button-generator").addEventListener("click", ()=>{
     if(!isAnimating){
-        view.loadNewColor("ABCDEF");
+        program.Generate();
     }
 })
 
 document.querySelector(".copy").addEventListener("click", ()=>{
-    view.displayCopiedColor("ABCDEF");
+    program.Copy();
 })
 
 
-
+//!
 
 //wyłączenie shelter
 document.querySelector(".bg-dimm").addEventListener("click", ()=>{
@@ -20,8 +25,10 @@ document.querySelector(".bg-dimm").addEventListener("click", ()=>{
 
 //włączenie shelter
 document.querySelector(".toggle").addEventListener("click", ()=>{
-    view.toggleSidebar();
+    program.Toggle();
 });
+
+///!
 
 //usunięcie klasy toggle-jump
 document.querySelector(".toggle").addEventListener("animationend", ()=>{
@@ -50,7 +57,7 @@ document.querySelector(".color-block").addEventListener("animationend", ()=>{
 const defaultColor = "8370F4";
 
 // !
-let staticIndex = 1;
+// let staticIndex = 1;
 // !
 
 const creator = {
@@ -62,11 +69,11 @@ const creator = {
         const inner = document.createElement("div");
         inner.classList.add("block-inner");
 
-        inner.style.background = `#${hex}`;
+        inner.style.backgroundColor = `#${hex}`;
         outer.append(inner);
 
         // !
-        inner.innerText = staticIndex++;
+        // inner.innerText = staticIndex++;
         // !
 
         return outer;
@@ -179,8 +186,14 @@ const view = {
         spanRange.innerText = `${first} - ${last}`;
     },
     
-    isCopyToggled() {return this.isCopyToggled},
-    isAddToggled() {return this.isAddToggled},
+    getIsCopyToggled() {return this.isCopyToggled},
+    getIsAddToggled() {return this.isAddToggled},
+    getIsSidebarToggled() {return this.isSidebarToggled},
+
+    resetButtons() {
+        if(this.getIsCopyToggled()) this.toggleCopyButton();
+        if(this.getIsAddToggled()) this.toggleAddButton();
+    }
 
 
 }
@@ -194,7 +207,7 @@ function rgbToColorVector(rgbText) {
 
     return fixedText.split(",");
 }
-// TODO - to jest fragment części występującej w animacji gdy klikamy na mały blok koloru
+//TODO - to jest fragment części występującej w animacji gdy klikamy na mały blok koloru
 // const dd = document.querySelector(".block-inner");
 // dd.addEventListener("click", (e)=>{
 //     let x = e.clientX;
@@ -269,26 +282,65 @@ const sidebarManager = {
 
     },
 
-    loadSidebar() {
-        const upIndex   = this.colors.length - 1 ;
-        let downIndex = upIndex - this.displayLimit + 1;
+    // loadSidebar() {
+    //     const upIndex   = this.colors.length - 1 ;
+    //     let downIndex = upIndex - this.displayLimit + 1;
         
-        if(downIndex < 0) downIndex = 0;
+    //     if(downIndex < 0) downIndex = 0;
 
-        this.updateIndexFirst(downIndex);
-        this.updateIndexLast(upIndex);
+    //     this.updateIndexFirst(downIndex);
+    //     this.updateIndexLast(upIndex);
 
-        this.addBlockUsingRange(downIndex, upIndex, true);
+    //     this.addBlockUsingRange(downIndex, upIndex, true);
+    // },
 
+    // Gdy coś dodaliśmy i było scrollowane i jest więcej niż 50 elem to jest reset na początek
+    resetSidebar(){
+        const sidebar = document.querySelector(".scrollable-flex") ;
         
+        while(sidebar.childElementCount>0)
+            sidebar.childNodes[0].remove();
+
+        const to   =  sidebarManager.colors.length - 1;
+        let from =  to - sidebarManager.displayLimit + 1;
+
+        if(from < 0) from = 0;
+
+        sidebarManager.updateIndexLast(to);
+        sidebarManager.updateIndexFirst(from - 1);
+
+        this.addBlockUsingRange(from, to);
+
     },
 
+
+    // Gdy nie ma jeszcze 50 elementów i coś dodaliśmy
+    updateSidebar(){
+        let lastIndex = this.indexOfLastDisplayedColor;
+        let newLastIndex = this.colors.length - 1;
+
+        if(newLastIndex === 0) 
+        {
+            this.addBlockUsingRange(0, 0);
+            sidebarManager.updateIndexLast(newLastIndex);
+        }
+
+
+        if(lastIndex !== newLastIndex)
+        {
+            this.addBlockUsingRange(lastIndex, newLastIndex);
+            sidebarManager.updateIndexLast(newLastIndex);
+        }
+
+    },
+
+    // Gdy jest więcej niż 50 elementów i scrollowaliśmy i nie dodaliśmy niczego za pomocą ADD()
     defaultSidebar() {
 
         const sidebar = document.querySelector(".scrollable-flex");
         const sidebarElCount = sidebar.childElementCount;
 
-        if(sidebarElCount > 50){
+        if(sidebarElCount > this.displayLimit){
             for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
                 sidebar.firstChild.remove();
 
@@ -297,14 +349,95 @@ const sidebarManager = {
 
     },
 
-    addBlockColor(hex = defaultColor) {
-
-        const sidebar = document.querySelector(".scrollable-flex");
-        const object  = creator.createColorDiv(hex);
-        this.colors.push(object);
-        
-    },
-
 
 
 }
+
+
+const program = {
+    mainBlockHex : defaultColor,
+    userAddedColor : false,
+    isScrolled : false,
+
+    randomHex() {
+        const digits = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'];
+        let hex = "";
+
+        while ( hex.length < 6 ) {
+            hex += (Math.round(Math.random() * 15)).toString(16) 
+          }
+          return hex.toUpperCase();
+    },
+
+    Generate() {
+        const hex = this.randomHex();
+        view.resetButtons();
+        view.loadNewColor(hex);
+        this.mainBlockHex = hex;
+
+        //TODO      animacja buttonu
+    },
+
+    Copy() {
+        if(!view.isCopyToggled){
+            view.toggleCopyButton();
+            view.displayCopiedColor(this.mainBlockHex);
+        }
+        else {
+            view.toggleCopyButton();
+        }
+    },
+    
+    Add(){
+        if(!view.getIsAddToggled()){
+            const block = creator.createColorDiv(this.mainBlockHex);
+            
+            view.toggleAddButton();
+            sidebarManager.colors.push(block);
+
+            //!
+            for(let i = 0 ; i<50 ; i++)
+                sidebarManager.colors.push(creator.createColorDiv(this.randomHex()));
+
+            //!
+
+            this.userAddedColor = true;
+        }
+        else{
+            view.toggleAddButton();
+            sidebarManager.colors.pop();
+        }
+    },
+
+    CopyBlock(hex){
+        const copyAPI = document.querySelector(".copyAPI");
+        view.displayCopiedColor(hex);
+        copyAPI.click();
+    },
+
+    Toggle() {
+        if(!view.getIsSidebarToggled()){
+
+            if(this.userAddedColor && this.isScrolled) {sidebarManager.resetSidebar(); this.userAddedColor = false;}
+            else if(this.userAddedColor) {sidebarManager.updateSidebar(); this.userAddedColor = false}
+            else if(this.isScrolled) {sidebarManager.defaultSidebar(); this.isScrolled = false}
+
+            view.toggleSidebar();
+        }
+    }
+
+}
+
+
+
+document.querySelectorAll(".block-inner").forEach((e)=>{
+    e.addEventListener("click",(el)=>{
+        const blockHex =  rgb2hex(el.target.style.backgroundColor).toUpperCase();
+        program.CopyBlock(blockHex);
+    })
+})
+
+document.querySelector(".add").addEventListener("click", 
+()=>{
+    program.Add();
+})

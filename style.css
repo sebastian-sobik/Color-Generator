@@ -355,6 +355,11 @@
     animation: 1.4s pop-up-animation ease-in-out;
   }
 
+  .pop-up-message span::selection {
+    background-color: white;
+  }
+  
+
   @keyframes pop-up-animation {
     40%,70%{
       opacity: 1;
@@ -407,4 +412,9 @@
     font-size: 1rem;
     border-radius: 0.6em;
 
+  }
+
+  .copyAPI {
+    visibility: hidden;
+    position: absolute;
   }
