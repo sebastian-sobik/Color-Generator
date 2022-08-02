@@ -1,5 +1,21 @@
 let isAnimating = false;
 
+window.addEventListener("beforeunload", function(e){
+
+    localStorage.setItem("colors", JSON.stringify(allColors()) || []);
+
+ }, false);
+
+ window.addEventListener("load", function(e){
+
+    const colors = JSON.parse(localStorage.getItem("colors"));
+
+    colors.forEach(element => {
+        const object = creator.createColorDiv(element);
+        sidebarManager.colors.push(object);
+    });
+
+ },false)
 
 new ClipboardJS('.copy');
 new ClipboardJS('.copyAPI');
@@ -57,9 +73,6 @@ document.querySelector(".color-block").addEventListener("animationend", ()=>{
 
 const defaultColor = "8370F4";
 
-// !
-let staticIndex = 1;
-// !
 
 const creator = {
     createColorDiv(hex = defaultColor) {
@@ -77,10 +90,6 @@ const creator = {
             const blockHex =  rgb2hex(el.target.style.backgroundColor).toUpperCase();
             program.CopyBlock(blockHex);
         })
-
-        // !
-        inner.innerText = staticIndex++;
-        // !
 
         return outer;
         
@@ -371,7 +380,6 @@ const program = {
     scrolledUp : false,
     scrolledDown : false,
     moreThanDefault: false,
-
     randomHex() {
         const digits = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'];
         let hex = "";
@@ -431,6 +439,7 @@ const program = {
             if(this.userAddedColor && !this.moreThanDefault) {sidebarManager.updateSidebar(); this.userAddedColor = false}
             else if(this.userAddedColor && this.isScrolled) {sidebarManager.resetSidebar(); this.userAddedColor = false;}
             else if(this.isScrolled) {sidebarManager.defaultSidebar(); this.isScrolled = false}
+            else if(sidebarManager.colors.length > 0) {sidebarManager.updateSidebar()}
 
             view.toggleSidebar();
         }
@@ -494,3 +503,13 @@ sidebar.addEventListener("scroll", (e)=>{
 
 })
 
+function allColors() {
+    const colors = [];
+    const sidebarManagerColorBlocks = sidebarManager.colors;
+
+    sidebarManagerColorBlocks.forEach(element => {
+        colors.push(rgb2hex(element.firstChild.style.backgroundColor));
+    });
+
+    return colors;
+}
