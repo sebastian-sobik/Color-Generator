@@ -1,89 +1,28 @@
-let isAnimating = false;
-
-window.addEventListener("beforeunload", function(e){
-
-    localStorage.setItem("colors", JSON.stringify(allColors()) || []);
-
- }, false);
-
- window.addEventListener("load", function(e){
-
-    const colors = JSON.parse(localStorage.getItem("colors"));
-
-    colors.forEach(element => {
-        const object = creator.createColorDiv(element);
-        sidebarManager.colors.push(object);
-    });
-
- },false)
-
 new ClipboardJS('.copy');
 new ClipboardJS('.copyAPI');
 
-const rgb2hex = (rgb) => `${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`
+import {defaultColor, limit, delay, height} from './defaultValues.js';
 
-document.querySelector(".button-generator").addEventListener("click", ()=>{
-    if(!isAnimating){
-        program.Generate();
-    }
-})
+if(window.matchMedia('screen and (min-width: 1280px)').matches){
+    limit = 70;
+}
 
-document.querySelector(".copy").addEventListener("click", ()=>{
-    program.Copy();
-})
+let scrollTopGlobal = 0;
+let wait = false;
+let isAnimating = false;
 
 
-//!
-
-//wyłączenie shelter
-document.querySelector(".bg-dimm").addEventListener("click", ()=>{
-    view.toggleSidebar();
-});
-
-//włączenie shelter
-document.querySelector(".toggle").addEventListener("click", ()=>{
-    program.Toggle();
-});
-
-///!
-
-//usunięcie klasy toggle-jump
-document.querySelector(".toggle").addEventListener("animationend", ()=>{
-    document.querySelector(".toggle").classList.remove("toggle-jump");
-});
-
-//usunięcie klasy pop-up-message-active
-document.querySelector(".pop-up-message").addEventListener("animationend", ()=>{
-    const pop_up = document.querySelector(".pop-up-message");
-    pop_up.classList.remove("pop-up-message-active");
-})
-
-//aktywacja toggle-jump
-document.querySelector(".add").addEventListener("click", ()=>{
-    document.querySelector(".toggle").classList.add("toggle-jump");
-})
-
-//usuwanie animacji z color-block
-document.querySelector(".color-block").addEventListener("animationend", ()=>{
-    document.querySelector(".color-block").classList.remove("color-block-animation");
-    isAnimating = false;
-})
-
-
-
-const defaultColor = "8370F4";
-
-
-const creator = {
+const creator = {  
+    
     createColorDiv(hex = defaultColor) {
 
         const outer = document.createElement("div");
+        const removal = this.createRemoval();
+        const inner = this.createInner(hex)
+
         outer.classList.add("block-outer");
-
-        const inner = document.createElement("div");
-        inner.classList.add("block-inner");
-
-        inner.style.backgroundColor = `#${hex}`;
+        
+        inner.append(removal);
         outer.append(inner);
 
         inner.addEventListener("click",(el)=>{
@@ -91,26 +30,48 @@ const creator = {
             program.CopyBlock(blockHex);
         })
 
+        ClickAndHold.apply(outer, ()=>{
+            outer.remove();
+            sidebarManager.colors[sidebarManager.colors.indexOf(outer)] = null;
+            program.deletedItems++;
+            if(program.deletedItems==3)
+                view.toggleTrash();
+
+          })
+
         return outer;
         
     },
 
+    createRemoval() {
+        const removal = document.createElement("div");
+        removal.classList.add("removal-block");
+
+        return removal;
+    },
+
+    createInner(hex){
+        const inner = document.createElement("div");
+        inner.classList.add("block-inner");
+        inner.style.backgroundColor = `#${hex}`;
+
+        return inner;
+    },
+
+
 }
+
 
 const view = {
     isCopyToggled : false,
     isAddToggled : false,
-    isSidebarToggled: false,    
+    isSidebarToggled: false,  
+    isTrashToggled: false,  
 
-    // ! do zrobienia
-    deleteClrSquareAnimation(colorSquare) {
-
-    },
 
     changeSquareClr(hex = defaultColor) {
         const clrSquare = document.querySelector(".color");
         clrSquare.style.backgroundColor = `#${hex}`;
-
     },
 
     changeBgClr(hex = defaultColor) {
@@ -120,29 +81,32 @@ const view = {
 
     toggleCopyButton() {
         
-        const leftButtonImg = document.querySelector(".icon-left img");
-        
-        if(this.isCopyToggled)
-            leftButtonImg.setAttribute("src", "images/copy.svg");
-        else 
-            leftButtonImg.setAttribute("src", "images/check.svg");
-        
+        const leftButtonImg = document.querySelector(".copy div");
+
+        ["fa-check", "fa-solid", "fa-copy"].forEach(element => { leftButtonImg.classList.toggle(element); });
+
         this.isCopyToggled = !this.isCopyToggled; 
 
     },
 
     toggleAddButton() {
         
-        const rightButtonImg = document.querySelector(".icon-right img");
+        const rightButtonImg = document.querySelector(".add div");
         
-        if(this.isAddToggled){
-            rightButtonImg.setAttribute("src", "images/add.svg")
-        }
-        else {
-            rightButtonImg.setAttribute("src", "images/check.svg")
-        }
+        ["fa-check", "fa-solid", "fa-plus"].forEach(element => { rightButtonImg.classList.toggle(element); });
 
         this.isAddToggled = !this.isAddToggled; 
+
+    },
+
+    toggleSidebar() {
+
+        const sidebar = document.querySelector(".sidebar")
+
+        this.toggleSidebarButton();
+        sidebar.classList.toggle("sidebar-hidden");
+        this.toggleDimmBackground();
+        this.isSidebarToggled = !this.isSidebarToggled;
 
     },
 
@@ -158,16 +122,6 @@ const view = {
             const dimmer = document.querySelector(".bg-dimm");
             dimmer.classList.toggle("bg-dimm-active");
         } ,
-
-    toggleSidebar() {
-
-        this.toggleSidebarButton();
-        const sidebar = document.querySelector(".sidebar")
-        sidebar.classList.toggle("sidebar-hidden");
-        this.toggleDimmBackground();
-        this.isSidebarToggled = !this.isSidebarToggled;
-
-    },
 
     displayCopiedColor(hex = defaultColor) {
         
@@ -198,6 +152,12 @@ const view = {
         const spanRange = document.querySelector(".sidebar-range");
         spanRange.innerText = `${first} - ${last}`;
     },
+
+    toggleTrash(){
+        const trash = document.querySelector(".trash");
+        trash.classList.toggle("trash-hidden");
+        this.isTrashToggled = !this.isTrashToggled;
+    },
     
     getIsCopyToggled() {return this.isCopyToggled},
     getIsAddToggled() {return this.isAddToggled},
@@ -206,41 +166,15 @@ const view = {
     resetButtons() {
         if(this.getIsCopyToggled()) this.toggleCopyButton();
         if(this.getIsAddToggled()) this.toggleAddButton();
-    }
-
+    },
 
 }
 
-const resetObject = null;
-function rgbToColorVector(rgbText) {
-    let leftLim  = rgbText.indexOf("(");
-    let rightLim = rgbText.indexOf(")");
-
-    let fixedText = rgbText.slice(leftLim + 1, rightLim);
-
-    return fixedText.split(",");
-}
-//TODO - to jest fragment części występującej w animacji gdy klikamy na mały blok koloru
-// const dd = document.querySelector(".block-inner");
-// dd.addEventListener("click", (e)=>{
-//     let x = e.clientX;
-//     let y = e.clientY;
-//     const bgColor = e.target.style.backgroundColor;
-//     let circleColorsVector = rgbToColorVector(bgColor);
-    
-//     circleColorsVector.forEach((element,index) => {
-//         circleColorsVector[index]=element/2;
-//     });
-// });
-
-
-
-const limit = 50;
 
 const sidebarManager = {
-    indexOfFirstDisplayedColor : 0, //first od dołu
-    indexOfLastDisplayedColor  : 0,  //last od dołu
-    blocksToAdd  : 10,
+    indexOfFirstDisplayedColor : 0, 
+    indexOfLastDisplayedColor  : 0,  
+    blocksToAdd  : 5,
     displayLimit : limit,
     colors : [],
     
@@ -258,7 +192,7 @@ const sidebarManager = {
         {
             const from = this.indexOfLastDisplayedColor + 1;
             const to = ((this.indexOfLastDisplayedColor + this.blocksToAdd) >= this.colors.length) 
-                                                  ?  this.colors.length - 1 :  (this.indexOfLastDisplayedColor + this.blocksToAdd);
+                                    ?  this.colors.length - 1 :  (this.indexOfLastDisplayedColor + this.blocksToAdd);
             this.addBlockUsingRange(from, to, false);
             this.updateIndexLast(to);
         }
@@ -283,19 +217,20 @@ const sidebarManager = {
         {
             for (let index = to; index >= from; index--) {
                 const colorBlock  = this.colors[index];
-                sidebar.append(colorBlock);            
+                if(colorBlock != null)
+                    sidebar.append(colorBlock);            
             }
         }
         else {
             for (let index = from; index <= to; index++) {
                 const colorBlock  = this.colors[index];
-                sidebar.prepend(colorBlock);            
+                if(colorBlock != null)
+                    sidebar.prepend(colorBlock);            
             }
         }
 
     },
 
-    // Gdy coś dodaliśmy i było scrollowane i jest więcej niż 50 elem to jest reset na początek
     resetSidebar(){
         const sidebar = document.querySelector(".scrollable-flex") ;
         
@@ -314,8 +249,6 @@ const sidebarManager = {
 
     },
 
-
-    // Gdy nie ma jeszcze 50 elementów i coś dodaliśmy
     updateSidebar(){
         let lastIndex = this.indexOfLastDisplayedColor;
         let newLastIndex = this.colors.length - 1;
@@ -337,17 +270,21 @@ const sidebarManager = {
         {
             program.moreThanDefault = true;
         }
+        else{
+            program.moreThanDefault = false;
+        }
     },
 
-    // Gdy jest więcej niż 50 elementów i scrollowaliśmy i nie dodaliśmy niczego za pomocą ADD()
     defaultSidebar() {
 
         const sidebar = document.querySelector(".scrollable-flex");
         const sidebarElCount = sidebar.childElementCount;
 
+        //! console.log(program.scrolledDown, "   ", program.scrolledUp);
+
         if(sidebarElCount > this.displayLimit){
             
-            if(program.scrolledDown && !program.scrolledUp){
+            if(program.scrolledDown){
                 for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
                     sidebar.firstChild.remove();
 
@@ -357,16 +294,12 @@ const sidebarManager = {
                 for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
                     sidebar.lastChild.remove();
 
-                this.updateIndexFirst(this.indexOfFirstDisplayedColor + this.displayLimit - 1);
+                this.updateIndexFirst(this.indexOfLastDisplayedColor - this.displayLimit);
             }
 
         }
 
     },
-
-    removeBlock() {
-
-    }
 
 
 
@@ -380,6 +313,7 @@ const program = {
     scrolledUp : false,
     scrolledDown : false,
     moreThanDefault: false,
+    deletedItems: 0,
     randomHex() {
         const digits = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'];
         let hex = "";
@@ -395,8 +329,6 @@ const program = {
         view.resetButtons();
         view.loadNewColor(hex);
         this.mainBlockHex = hex;
-
-        //TODO      animacja buttonu
     },
 
     Copy() {
@@ -419,6 +351,7 @@ const program = {
         else{
             view.toggleAddButton();
             sidebarManager.colors.pop();
+            this.userAddedColor = false;
         }
 
     },
@@ -432,7 +365,7 @@ const program = {
     Toggle() {
         if(!view.getIsSidebarToggled()){
 
-            if(view.isAddToggled ){
+            if(view.isAddToggled){
                 document.querySelector(".button-generator").click();
             }
 
@@ -443,73 +376,278 @@ const program = {
 
             view.toggleSidebar();
         }
+            
     },
 
     scrollReset() {
         this.scrolledDown = false;
         this.scrolledUp = false;
+        this.isScrolled = false;
     }
 
 }
 
 
+const listeners = {
+    WindowListeners(){
 
+        const isOnIOS = navigator.userAgent.match(/iPad/i)|| navigator.userAgent.match(/iPhone/i);
+        const eventName = isOnIOS ? "pagehide" : "beforeunload";
 
-document.querySelector(".add").addEventListener("click", 
-()=>{
-    program.Add();
-})
+        window.addEventListener(eventName, function(){
 
-
-const delay = 300;
-const height = 300;
-const sidebar = document.querySelector(".scrollable-flex");
-let scrollTopGlobal = 0;
-let wait = false;
-
-sidebar.addEventListener("scroll", (e)=>{
-
-    const scrollTop = e.target.scrollTop;
-
-    if(!wait){
-        const scrollTopMax = e.target.scrollTopMax;
-        program.scrollReset();
-
-        if((scrollTop - scrollTopGlobal) > 0)
-        {
-            program.scrolledDown = true;
-            if((scrollTopMax-scrollTop) < height)
-            {
-                program.isScrolled = true;
-                sidebarManager.scrolledDown();
-                wait = true;
-                setTimeout(()=>{wait = false}, delay);
+            localStorage.setItem("colors", JSON.stringify(allColors()) || []);
+            sessionStorage.setItem("colorNow", program.mainBlockHex);
+        
+        }, false);
+    
+        window.addEventListener("load", function(){
+        
+            const colors = JSON.parse(localStorage.getItem("colors"));
+        
+            colors.forEach(element => {
+                const object = creator.createColorDiv(element);
+                sidebarManager.colors.push(object);
+            });
+        
+            const savedHex = sessionStorage.getItem("colorNow");
+            if(savedHex){
+                view.loadNewColor(savedHex);
+                program.mainBlockHex = savedHex;
             }
-        }
-        else {
-            program.scrolledUp = true;
-            if(scrollTop < height)
-            {
-                program.isScrolled = true;
-                sidebarManager.scrolledUp();
-                wait = true;
-                setTimeout(()=>{wait = false}, delay);
-            }
-        }
+        },false)
 
+        window.addEventListener("keydown", (e)=>{
+            console.log(e.code);
+            if(!isAnimating && e.code === "Space"){
+                program.Generate();
+                this.isAnimating = true;
+            }
+            else if(e.code === "KeyA")
+            {
+                program.Add();
+                document.querySelector(".toggle").classList.add("toggle-jump");
+            }
+            else if(e.code === "KeyC")
+            {
+                program.Copy();
+            }
+        });
+
+
+    },
+
+    CopyListeners(){
+
+        const copyButton = document.querySelector(".copy")
+
+        copyButton.addEventListener("click", ()=>{
+            program.Copy();
+        });
+        
+    },
+
+    GeneratorListeners(){
+
+        const buttonGenerator = document.querySelector(".button-generator");
+
+        buttonGenerator.addEventListener("click", ()=>{
+            if(!isAnimating){
+                program.Generate();
+                this.isAnimating = true;
+            }
+        });
+
+    },
+
+    BackgroundListeners(){
+        const background = document.querySelector(".bg-dimm");
+
+        background.addEventListener("click", ()=>{
+            view.toggleSidebar();
+            program.deletedItems = 0;
+            if(view.isTrashToggled)
+            {
+                view.toggleTrash();
+            }
+        });
+    },
+
+    ToggleListeners(){
+        const toggle = document.querySelector(".toggle");
+
+        toggle.addEventListener("click", ()=>{
+            program.Toggle();
+        });
+
+        toggle.addEventListener("animationend", ()=>{
+            toggle.classList.remove("toggle-jump");
+        });
+    },
+
+    PopUpListeners(){
+        const popUp = document.querySelector(".pop-up-message");
+
+        popUp.addEventListener("animationend", ()=>{
+            popUp.classList.remove("pop-up-message-active");
+        });
+    },
+
+    AddListeners(){
+        const add = document.querySelector(".add");
+
+        add.addEventListener("click", ()=>{
+            document.querySelector(".toggle").classList.add("toggle-jump");
+        });
+
+        add.addEventListener("click", ()=>{
+            program.Add();
+        })
+    },
+
+    ColorBlockListeners(){
+        const colorBlock = document.querySelector(".color-block");
+        
+        colorBlock.addEventListener("animationend", ()=>{
+            colorBlock.classList.remove("color-block-animation");
+            isAnimating = false;
+        });
+    },
+
+    SidebarListeners(){
+        const sidebar = document.querySelector(".scrollable-flex");
+        
+        sidebar.addEventListener("scroll", (e)=>{
+            
+            const scrollTop = e.target.scrollTop;
+            const scrollTopMax = e.target.scrollHeight;
+        
+            if(!wait){
+
+                program.isScrolled = false;
+
+                if((scrollTop - scrollTopGlobal) > 0)
+                {
+                    //scrolling down
+
+                    program.scrolledUp = false;
+                    program.scrolledDown = true;
+
+                    if((scrollTopMax-scrollTop) < height)
+                    {
+                        program.isScrolled = true;
+                        sidebarManager.scrolledDown();
+                        wait = true;
+                        setTimeout(()=>{wait = false}, delay);
+                    }
+                }
+                else {
+                    //scrolling up
+
+                    program.scrolledUp = true;
+                    program.scrolledDown = false;
+                    if(scrollTop < height)
+                    {
+                        program.isScrolled = true;
+                        sidebarManager.scrolledUp();
+                        wait = true;
+                        setTimeout(()=>{wait = false}, delay);
+                    }
+                }
+            
+            }
+            scrollTopGlobal = scrollTop;
+
+
+
+        })
+    },
+
+    TrashListeners(){
+        const trash = document.querySelector(".trash");
+
+        trash.addEventListener("click", ()=>{
+            const sidebar = document.querySelector(".scrollable-flex");
+
+            localStorage.clear();
+            sidebarManager.colors = [];
+
+            while(sidebar.firstChild){
+                sidebar.removeChild(sidebar.lastChild);
+            }
+        })
+    },
+
+    ApplyListeners(){
+        for (const key in this)
+        { 
+            if(key === "ApplyListeners")
+                continue;
+            this[key]();
+        } 
+    },
+
+}
+
+
+class ClickAndHold {
+
+    constructor(target, callback) {
+        this.target = target;
+        this.callback = callback;
+        this.isHeld = false;
+        this.activeHoldTimeoutId = null;
+
+        ["mousedown", "touchstart"].forEach(type => {
+            this.target.addEventListener(type, this._onHoldStart.bind(this)); //!
+        });
+ 
+        ["mouseup", "mouseleave", "mouseout", "touchend", "touchcancel"].forEach(type => {
+            this.target.addEventListener(type, this._onHoldEnd.bind(this)); //!
+        });
     }
 
-    scrollTopGlobal = scrollTop;
+    _onHoldStart() {
+        this.isHeld = true;
 
-})
+        this.target.firstChild.firstChild.classList.add("animation-removal");
+
+        this.activeHoldTimeoutId = setTimeout(()=>{
+            if(this.isHeld){
+                this.callback();
+            }
+        },450)
+    }
+
+    _onHoldEnd() {
+        this.target.firstChild.firstChild.classList.remove("animation-removal");
+
+        this.isHeld = false;
+        clearTimeout(this.activeHoldTimeoutId);
+    }
+
+    static apply(target, callback) {
+        new ClickAndHold(target, callback);
+    }
+
+}
+
 
 function allColors() {
     const colors = [];
     const sidebarManagerColorBlocks = sidebarManager.colors;
 
     sidebarManagerColorBlocks.forEach(element => {
-        colors.push(rgb2hex(element.firstChild.style.backgroundColor));
+        if(element != null) 
+            colors.push(rgb2hex(element.firstChild.style.backgroundColor));
     });
 
     return colors;
 }
+
+
+const rgb2hex = (rgb) => `${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`
+
+
+listeners.ApplyListeners();
+

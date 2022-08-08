@@ -81,21 +81,21 @@
     transition: ease-in-out background-color 600ms;
   }
 
+
+  /* ----------- */
+  /* COLOR-BLOCK */
+  /* ----------- */
+
   .color-block {
     min-width: 11.5rem;
     min-height: 11.5rem;
     background-color: white;
-    will-change: transform;
-    
     padding: 1rem;
     border-radius: 0.75em;
-
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-
-    margin-top: 11rem;
+    margin-top: 11rem; 
     margin-bottom: auto;
-
-    
+    will-change: transform;    
   }
 
   .color-block-animation {
@@ -105,10 +105,8 @@
   .color {
     width: 100%;
     height: 100%;
-
     border-radius: 0.5em;
     background-color: #8370F4;
-
     transition: ease-in-out background-color 600ms;
   }
 
@@ -122,10 +120,12 @@
 
 
 
-  /* COPY ADD */
+  /*----------*/
+  /*-COPY-ADD-*/
+  /*----------*/
 
   .container-copy-add {
-    width: 11.5rem;
+    width: 11.5rem; 
     height: 3.45rem;
     background-color: white;
     display: flex;
@@ -134,18 +134,16 @@
     border-radius: 0.5em;
     border: 2px solid black;
 
-    margin-bottom: 1.5em;
+    margin-bottom: 1.5rem;
   }
 
   .copy-add-button{
     flex: 0 1 50%;
-    background: none;
-    
-    display:flex;
-    justify-content: center;
-    align-items: center;
+      display:flex;
+      justify-content: center;
+      align-items: center;
 
-    
+    background: none;
   }
 
   .copy-add-button:active {
@@ -155,19 +153,22 @@
   .copy {
     border-right: 2px solid black;
     border-radius: 0.5em 0 0 0.5em;
+    font-size: 1.2rem;
   }
 
   .add {
     border-radius: 0 0.5em 0.5em 0;
+    font-size: 1.5rem;
   }
 
-  .icon {
-    display:inline-block;
+  .fa-check{
+    font-size: 1.2rem;
   }
   
-
-  /* ================== */
+  
+  /* ------ */
   /* BUTTON */
+  /* ------ */
 
   button {
     outline: none;
@@ -180,17 +181,17 @@
   }
 
   .button-generator {
-    min-width: 16.875rem;
-    height: 4.81rem;
-    margin-bottom: 4rem;
+    width:80%;
+    max-width: 800px;
+    height: 4.8rem;
+    margin-bottom: 3em;
+    border-radius: 0.4em;
     position: relative;
-
-    border-radius: 0.5em;
+    
     font-weight: 700;
     font-size: 1.2rem;
     color: #1e2731;
     letter-spacing: 1px;
-    
   }
 
   .button-generator::after {
@@ -208,6 +209,8 @@
 
 
   /* SHELTER */
+  /* SHELTER */
+  /* SHELTER */
   
   .toggle {
     height: var(--toggle-height);
@@ -222,7 +225,7 @@
 
     transition: all var(--sidebar-animation-time) var(--sidebar-animation-function);
 
-    border-radius: 1rem 0 0 1rem;
+    border-radius: 1em 0 0 1em;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 
   }
@@ -250,7 +253,7 @@
   }
 
   .ACTIVE-arrow-icon-toggle{
-    transform: rotateY(180deg)  translateX(50%) translateY(-50%);
+    transform: rotateY(180deg) translateX(50%) translateY(-50%);
   }
 
   .sidebar {
@@ -293,9 +296,6 @@
     color:white;
     font-weight: 700;
     font-size: 0.9rem;
-    /* letter-spacing: 1px; */
-
-
   }
 
   .scrollable-flex {
@@ -316,8 +316,9 @@
 
   .block-outer {
     width: 18vw;
-    min-height:18vw;
+    min-height: 18vw;
     padding: 0.4rem;
+    padding: 8%;
     background-color: white;
     margin-bottom: 1.5rem;
     border-radius: 0.5rem;
@@ -327,6 +328,42 @@
   .block-outer-active {
     animation: 1s ease-in-out block-rotate 1;
   }
+
+  .block-outer:last-child {margin-bottom: 0;}
+
+  .block-inner {
+    background-color: #70caf4;
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+
+  /* BG-DIMM */
+  /* BG-DIMM */
+  /* BG-DIMM */
+
+  .bg-dimm {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0);
+    transition: background var(--sidebar-animation-time) var(--sidebar-animation-function);
+    pointer-events: none;
+  }
+
+  .bg-dimm-active {
+    background: rgba(0, 0, 0, 0.65);
+    pointer-events: all;
+  }
+
+
+  /* POP-UP */
+  /* POP-UP */
+  /* POP-UP */
 
   .pop-up-message {
     width: 8.5rem;
@@ -377,35 +414,8 @@
 
   }
 
-  .block-outer:last-child {margin-bottom: 0;}
-
-  .block-inner {
-    background-color: #70caf4;
-    border-radius: inherit;
-    width:100%;
-    height: 100%;
-  }
-
-  .bg-dimm {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0);
-    transition: background var(--sidebar-animation-time) var(--sidebar-animation-function);
-    pointer-events: none;
-  }
-
-  .bg-dimm-active {
-    background: rgba(0, 0, 0, 0.65);
-    pointer-events: all;
-  }
-
-
-  /* --------------- */
-
   .messageBlock {
-    min-width: 8.2rem;
+    width: 8.2rem;
     height: 2.5rem;
     background: white;
     color: var(--messageBlock-font-color);
@@ -418,3 +428,195 @@
     visibility: hidden;
     position: absolute;
   }
+
+  .removal-block {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #000000;
+    opacity: 25%;
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+
+    visibility: hidden;
+    transform-origin: 50% 50%;
+  }
+
+  .animation-removal {
+    visibility: visible;
+    animation: removal 500ms linear 50ms 1;
+  }
+  
+  @keyframes removal {
+    100%{
+      transform: scale(12);
+    }    
+  }
+
+  .notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+  }
+
+  .trash {
+    position: absolute;
+    left: 7%;
+    top: 40px;
+    font-size: 1rem;
+    color: rgb(72, 72, 72);
+    background-color: white;
+    padding: 0.7em;
+    box-sizing: border-box;
+    border-radius: 0.3em;
+    z-index: 1000;
+  }
+
+  .trash-hidden {
+    opacity: 0;
+  }
+
+  .copy, .add {
+    color: black;
+  }
+
+
+
+  /* IN-PROGRESS */
+  /* IN-PROGRESS */
+  /* IN-PROGRESS */
+  /* IN-PROGRESS */
+  /* IN-PROGRESS */
+
+  
+
+  @media screen and (min-width: 680px){
+    .button-generator {
+      width: 60%;
+      font-size: 1.5em;
+    }
+
+    .copy, .add{
+      font-size: 1.5em;
+    }
+
+    .container-copy-add { 
+      width: 14rem; 
+      height: 4rem;
+    }
+
+    
+    .color-block {
+      margin-top: 15rem;
+      min-width: 15rem;
+      min-height: 15rem;
+    }
+
+    .scrollable-flex {
+      padding: 1rem 1.5rem;
+    }
+
+    .removal-block {
+      width: 30px;
+      height: 30px;
+    }
+
+    .trash {
+      font-size: 1.8rem;
+    }
+
+    .toggle {
+      width: 36px;
+    }
+
+    .arrow-icon-toggle{
+      transform: scale(1.2) translateX(-50%) translateY(-50%);
+    }
+
+    .ACTIVE-arrow-icon-toggle{
+      transform: scale(1.2) rotateY(180deg) translateX(50%) translateY(-50%);
+    }
+
+    .pop-up-message {
+      width: 11.5rem;
+      height: 3.6rem;
+      font-size: 1.4rem;
+    }
+
+    .pop-up-message-color-box {
+      width: 2rem;
+      height: 2rem;
+    }
+
+  }
+
+  @media screen and (min-width: 680px) and (orientation: landscape){
+    .color-block {
+      margin-top: 10rem;
+    }
+  }
+
+
+  @media screen and (min-width: 1280px){
+    .color-block {
+      margin-top: 12rem;
+    }
+
+    .button-generator{
+      height: 6rem;
+    }
+
+    .add,.copy{
+      font-size: 1.7rem;
+    }
+    
+    .container-copy-add { 
+      width: 16rem; 
+      height: 4.2rem;
+    }
+
+    .sidebar{
+      max-width: 500px;
+      height: 50%;
+    }
+
+    .scrollable-flex {
+      overscroll-behavior: contain;
+      display: grid;
+      gap: 1rem;
+      width: 100%;
+      height: 100%;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: 1fr 1fr 1fr 1fr;
+    }
+
+    .block-outer {
+      padding: 0.5em;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 0.5rem;
+    }
+    .block-outer:last-child{
+      margin-right: none;
+    }
+    
+    
+
+  }
+
+  @media screen and (max-height: 700px) {
+    .color-block {
+      margin-top: 8rem;
+    }
+}
+
+@media screen and (min-width: 480px){
+  .button-generator {
+    width: 70%;
+  }
+}
+
+  
