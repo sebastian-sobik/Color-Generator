@@ -10,6 +10,7 @@ Designed for mobile, built for everyone.
 * locally saving colors
 * enjoyable experience
 * animations
+* responsive design [almost done]
 
 ## **Major challenges** 💪🏼
 * designing sidebarManager object that loads colors in real time (while scrolling), manage added/deleted colors, manage toolbar nodes quantity,
@@ -32,3 +33,6 @@ Designed for mobile, built for everyone.
   * [x] Color deleting
   * [x] Color generation
   * [X] Toolbar animations
+ * [x] Trash button (after 3 removes it appears)
+ 
+ 
