@@ -1,5 +1,5 @@
 # Color-Generator
-![screen-gif](./generator.gif)
+<img src="./generator.gif" alt="GIF" width="500" height="600">
 
 ## Description
 Color-Generator let designers smoothly pick new color tones for their projects. 
