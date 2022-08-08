@@ -1,7 +1,11 @@
 new ClipboardJS('.copy');
 new ClipboardJS('.copyAPI');
 
-import {defaultColor, limit, delay, height} from './defaultValues.js';
+
+const defaultColor = "8370F4";
+let limit = 10;
+const delay = 300;
+const height = 700;
 
 if(window.matchMedia('screen and (min-width: 1280px)').matches){
     limit = 70;
