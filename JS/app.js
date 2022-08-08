@@ -8,7 +8,7 @@ const delay = 300;
 const height = 700;
 
 if(window.matchMedia('screen and (min-width: 1280px)').matches){
-    limit = 70;
+    limit = 50;
 }
 
 let scrollTopGlobal = 0;
