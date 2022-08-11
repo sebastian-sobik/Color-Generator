@@ -1,6 +1,8 @@
 # **Color-Generator**
 <img src="./generator.gif" alt="GIF" width="220" height="450">
 
+## `desktop && tablet version in progress`
+
 ## **Description**
 Color-Generator let designers smoothly pick new 🎨 for their projects. <br>
 Designed for mobile, built for everyone.
