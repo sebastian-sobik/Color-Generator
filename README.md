@@ -18,7 +18,8 @@ Designed for mobile, built for everyone.
 
 
 ## **To-do** 🏆
-
+* [ ] color generator performance check
+* [x] HTML5 syntax
 * [ ] Responsive design
   * [x] Mobile
   * [x] Tablet
@@ -35,5 +36,4 @@ Designed for mobile, built for everyone.
   * [x] Color generation
   * [X] Toolbar animations
  * [x] Trash button (after 3 removes it appears)
- 
  

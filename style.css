@@ -88,8 +88,8 @@
     min-width: 11.5rem;
     min-height: 11.5rem;
     background-color: white;
-    padding: 1rem;
-    border-radius: 0.75em;
+    padding: 1em;
+    border-radius: 0.75rem;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     margin-top: 11rem; 
     margin-bottom: auto;
@@ -103,7 +103,7 @@
   .color {
     width: 100%;
     height: 100%;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     background-color: #8370F4;
     transition: ease-in-out background-color 600ms;
   }
@@ -113,7 +113,6 @@
           transform: rotate(360deg);
         }
   }
-
 
 
 
@@ -129,7 +128,7 @@
     display: flex;
     
 
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     border: 2px solid black;
 
     margin-bottom: 1.5rem;
@@ -143,14 +142,15 @@
 
     background: none;
   }
-
-  .copy-add-button:active {
+    
+    .copy-add-button:active {
     background: yellow;
   }
 
+
   .copy {
     border-right: 2px solid black;
-    border-radius: 0.5em 0 0 0.5em;
+    border-radius: 0.5rem 0 0 0.5rem;
     font-size: 1.2rem;
   }
 
@@ -183,7 +183,7 @@
     max-width: 800px;
     height: 4.8rem;
     margin-bottom: 3em;
-    border-radius: 0.4em;
+    border-radius: 0.4rem;
     position: relative;
     
     font-weight: 700;
@@ -218,12 +218,12 @@
     position: absolute;
     z-index: 101;
     top:50%;
-    transform:  translateY(-50%) ;
     right: 0%;
-
+    
+    transform:  translateY(-50%) ;
     transition: all var(--sidebar-animation-time) var(--sidebar-animation-function);
 
-    border-radius: 1em 0 0 1em;
+    border-radius: 1rem 0 0 1rem;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 
   }
@@ -257,7 +257,7 @@
   .sidebar {
     height: 60%;
     min-width: 110px;
-    padding: 0 0.8rem;
+    padding: 0 0.8em;
     border-radius: 1rem 0 0 1rem;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.15);
@@ -304,7 +304,7 @@
     overflow-y:scroll;
     display: flex;
     flex-direction: column;
-    padding: 1rem 0.5rem;
+    padding: 1em 0.5em;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.20);
   }
 
@@ -315,7 +315,6 @@
   .block-outer {
     width: 18vw;
     min-height: 18vw;
-    padding: 0.4rem;
     padding: 8%;
     background-color: white;
     margin-bottom: 1.5rem;
@@ -368,7 +367,7 @@
     height: 2.5rem;
     border-radius: 0.75rem;
     background-color: white;
-    padding: 0 1rem;
+    padding: 0 1em;
     opacity: 0;
     pointer-events: none;
 
@@ -418,7 +417,7 @@
     background: white;
     color: var(--messageBlock-font-color);
     font-size: 1rem;
-    border-radius: 0.6em;
+    border-radius: 0.6rem;
 
   }
 
@@ -469,7 +468,7 @@
     background-color: white;
     padding: 0.7em;
     box-sizing: border-box;
-    border-radius: 0.3em;
+    border-radius: 0.3rem;
     z-index: 1000;
   }
 
