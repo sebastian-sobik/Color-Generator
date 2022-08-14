@@ -39,3 +39,7 @@ Designed for mobile, built for everyone.
   * [X] Toolbar animations
  * [x] Trash button (after 3 removes it appears)
  
+
+## **Important questions**
+* Is delegating events by .scrollable-sidebar better in case of optimalization than adding event listeners to each block-box?
+  **I guess it is**.
