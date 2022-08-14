@@ -1,8 +1,6 @@
 # **Color-Generator**
 <img src="./generator.gif" alt="GIF" width="220" height="450">
 
-## `desktop && tablet version in progress`
-
 ## **Description**
 Color-Generator let designers smoothly pick new 🎨 for their projects. <br>
 Designed for mobile, built for everyone.
@@ -22,10 +20,10 @@ Designed for mobile, built for everyone.
 ## **To-do** 🏆
 * [ ] color generator performance check
 * [x] HTML5 syntax
-* [ ] Responsive design
+* [x] Responsive design
   * [x] Mobile
   * [x] Tablet
-  * [ ] Web 
+  * [x] Web 
 * [ ] Color profiles - user will be able to assign colors to groups
 * [ ] Return button  
 * [ ] Save all button - saving all colors as string
