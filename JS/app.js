@@ -29,20 +29,6 @@ const creator = {
         inner.append(removal);
         outer.append(inner);
 
-        inner.addEventListener("click",(el)=>{
-            const blockHex =  rgb2hex(el.target.style.backgroundColor).toUpperCase();
-            program.CopyBlock(blockHex);
-        })
-
-        ClickAndHold.apply(outer, ()=>{
-            outer.remove();
-            sidebarManager.colors[sidebarManager.colors.indexOf(outer)] = null;
-            program.deletedItems++;
-            if(program.deletedItems==3)
-                view.toggleTrash();
-
-          })
-
         return outer;
         
     },
@@ -283,8 +269,6 @@ const sidebarManager = {
 
         const sidebar = document.querySelector(".scrollable-flex");
         const sidebarElCount = sidebar.childElementCount;
-
-        //! console.log(program.scrolledDown, "   ", program.scrolledUp);
 
         if(sidebarElCount > this.displayLimit){
             
@@ -565,6 +549,17 @@ const listeners = {
 
 
         })
+
+        sidebar.addEventListener("click", function(e){
+            if(e.target.className === "block-inner") {
+                const blockHex =  rgb2hex(e.target.style.backgroundColor).toUpperCase();
+                program.CopyBlock(blockHex);
+            }
+        });
+
+
+
+
     },
 
     TrashListeners(){
@@ -594,49 +589,6 @@ const listeners = {
 }
 
 
-class ClickAndHold {
-
-    constructor(target, callback) {
-        this.target = target;
-        this.callback = callback;
-        this.isHeld = false;
-        this.activeHoldTimeoutId = null;
-
-        ["mousedown", "touchstart"].forEach(type => {
-            this.target.addEventListener(type, this._onHoldStart.bind(this)); //!
-        });
- 
-        ["mouseup", "mouseleave", "mouseout", "touchend", "touchcancel"].forEach(type => {
-            this.target.addEventListener(type, this._onHoldEnd.bind(this)); //!
-        });
-    }
-
-    _onHoldStart() {
-        this.isHeld = true;
-
-        this.target.firstChild.firstChild.classList.add("animation-removal");
-
-        this.activeHoldTimeoutId = setTimeout(()=>{
-            if(this.isHeld){
-                this.callback();
-            }
-        },450)
-    }
-
-    _onHoldEnd() {
-        this.target.firstChild.firstChild.classList.remove("animation-removal");
-
-        this.isHeld = false;
-        clearTimeout(this.activeHoldTimeoutId);
-    }
-
-    static apply(target, callback) {
-        new ClickAndHold(target, callback);
-    }
-
-}
-
-
 function allColors() {
     const colors = [];
     const sidebarManagerColorBlocks = sidebarManager.colors;
@@ -648,10 +600,66 @@ function allColors() {
 
     return colors;
 }
-
-
 const rgb2hex = (rgb) => `${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`
 
 
 listeners.ApplyListeners();
 
+
+class ClickAndHold {
+
+    constructor(parent) {
+        this.parent = parent;
+        this.isHeld = false;
+        this.activeHoldTimeoutId = null;
+
+        ["mousedown", "touchstart"].forEach(type => {
+            this.parent.addEventListener(type, this._onHoldStart.bind(this)); //!
+        });
+ 
+        ["mouseup", "mouseleave", "mouseout", "touchend", "touchcancel"].forEach(type => {
+            this.parent.addEventListener(type, this._onHoldEnd.bind(this)); //!
+        });
+    }
+
+    _onHoldStart(e) {
+        this.isHeld = true;
+        const target = e.target;
+
+        console.log(e.target);
+
+        if(target.className !== "block-inner") return;
+
+        target.firstChild.classList.add("animation-removal");
+
+        this.activeHoldTimeoutId = setTimeout(()=>{
+            if(this.isHeld){
+                const outer = target.parentNode;
+                outer.remove();
+                sidebarManager.colors[sidebarManager.colors.indexOf(outer)] = null;
+                program.deletedItems++;
+                if(program.deletedItems==3)
+                    view.toggleTrash();
+            }
+        },450)
+    }
+
+    _onHoldEnd(e) {
+        const target = e.target;
+
+        if(target.className !== "block-inner") return;
+
+        target.firstChild.classList.remove("animation-removal");
+
+        this.isHeld = false;
+        clearTimeout(this.activeHoldTimeoutId);
+    }
+
+    static apply(target) {
+        new ClickAndHold(target);
+    }
+
+}
+
+
+ClickAndHold.apply(document.querySelector(".scrollable-flex"));
