@@ -19,14 +19,15 @@ Designed for mobile, built for everyone.
 
 ## **To-do** 🏆
 * [ ] color generator performance check
+* [ ] key shortcut - notification
+* [ ] Color profiles - user will be able to assign colors to groups
+* [ ] Return button  
+* [ ] Save all button - saving all colors as string
 * [x] HTML5 syntax
 * [x] Responsive design
   * [x] Mobile
   * [x] Tablet
   * [x] Web 
-* [ ] Color profiles - user will be able to assign colors to groups
-* [ ] Return button  
-* [ ] Save all button - saving all colors as string
 * [x] Keyboard control
 * [x] Optimized Toolbar - saved colors load in real time (while scrolling)
 * [x] Saving stored colors in localStorage
