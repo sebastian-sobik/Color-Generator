@@ -167,6 +167,7 @@ const sidebarManager = {
     blocksToAdd  : 5,
     displayLimit : limit,
     colors : [],
+    sidebar: document.querySelector(".scrollable-flex"),
     
     updateIndexFirst(index = 0) {
         this.indexOfFirstDisplayedColor = index;
@@ -178,30 +179,35 @@ const sidebarManager = {
     },
 
     scrolledUp() {
-        if(this.indexOfLastDisplayedColor < this.colors.length - 1)
+        const {indexOfLastDisplayedColor, blocksToAdd} = this;
+        const colorsLength = this.colors.length;
+
+        if(indexOfLastDisplayedColor < colorsLength - 1)
         {
-            const from = this.indexOfLastDisplayedColor + 1;
-            const to = ((this.indexOfLastDisplayedColor + this.blocksToAdd) >= this.colors.length) 
-                                    ?  this.colors.length - 1 :  (this.indexOfLastDisplayedColor + this.blocksToAdd);
+            const from = indexOfLastDisplayedColor + 1;
+            const to = ((indexOfLastDisplayedColor + blocksToAdd) >= colorsLength) 
+                                    ?  colorsLength - 1 :  (indexOfLastDisplayedColor + blocksToAdd);
             this.addBlockUsingRange(from, to, false);
             this.updateIndexLast(to);
         }
     },
 
     scrolledDown() {
-        if(this.indexOfFirstDisplayedColor > 0)
-        {
-            const from = ((this.indexOfFirstDisplayedColor - this.blocksToAdd) > 0) 
-                                                  ? (this.indexOfFirstDisplayedColor - this.blocksToAdd) : 0;  
+        const {indexOfFirstDisplayedColor, blocksToAdd} = this;
 
-            const to = this.indexOfFirstDisplayedColor - 1;
+        if(indexOfFirstDisplayedColor > 0)
+        {
+            const from = ((indexOfFirstDisplayedColor - blocksToAdd) > 0) 
+                                                  ? (indexOfFirstDisplayedColor - blocksToAdd) : 0;  
+
+            const to = indexOfFirstDisplayedColor - 1;
             this.addBlockUsingRange(from, to, true);
             this.updateIndexFirst(from);
         }
     },
 
     addBlockUsingRange(from, to, addBEFORE = false) {
-        const sidebar = document.querySelector(".scrollable-flex");
+        const {sidebar} = this;
         
         if(addBEFORE)
         {
@@ -222,7 +228,7 @@ const sidebarManager = {
     },
 
     resetSidebar(){
-        const sidebar = document.querySelector(".scrollable-flex") ;
+        const {sidebar} = this;
         
         while(sidebar.childElementCount>0)
             sidebar.childNodes[0].remove();
@@ -266,29 +272,26 @@ const sidebarManager = {
     },
 
     defaultSidebar() {
-
-        const sidebar = document.querySelector(".scrollable-flex");
+        const {sidebar, displayLimit, indexOfFirstDisplayedColor, indexOfLastDisplayedColor} = this;
         const sidebarElCount = sidebar.childElementCount;
 
-        if(sidebarElCount > this.displayLimit){
+        if(sidebarElCount > displayLimit){
             
             if(program.scrolledDown){
-                for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
+                for(let index = sidebarElCount ; index > displayLimit - 1 ; index--)
                     sidebar.firstChild.remove();
 
-                this.updateIndexLast(this.indexOfFirstDisplayedColor + this.displayLimit - 1);
+                this.updateIndexLast(indexOfFirstDisplayedColor + displayLimit - 1);
             }
             else {
-                for(let index = sidebarElCount ; index > this.displayLimit - 1 ; index--)
+                for(let index = sidebarElCount ; index > displayLimit - 1 ; index--)
                     sidebar.lastChild.remove();
 
-                this.updateIndexFirst(this.indexOfLastDisplayedColor - this.displayLimit);
+                this.updateIndexFirst(indexOfLastDisplayedColor - displayLimit);
             }
 
         }
-
     },
-
 
 
 }
@@ -302,8 +305,8 @@ const program = {
     scrolledDown : false,
     moreThanDefault: false,
     deletedItems: 0,
+
     randomHex() {
-        const digits = [0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'];
         let hex = "";
 
         while ( hex.length < 6 ) {
@@ -406,7 +409,6 @@ const listeners = {
         },false)
 
         window.addEventListener("keydown", (e)=>{
-            console.log(e.code);
             if(!isAnimating && e.code === "Space"){
                 program.Generate();
                 this.isAnimating = true;
@@ -465,6 +467,8 @@ const listeners = {
         const toggle = document.querySelector(".toggle");
 
         toggle.addEventListener("click", ()=>{
+            wait = true;
+            setTimeout(() => wait = false , delay);
             program.Toggle();
         });
 
@@ -529,7 +533,7 @@ const listeners = {
                         setTimeout(()=>{wait = false}, delay);
                     }
                 }
-                else {
+                else{
                     //scrolling up
 
                     program.scrolledUp = true;
