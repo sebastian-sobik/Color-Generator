@@ -22,6 +22,7 @@ Designed for mobile, built for everyone.
 * [ ] Color profiles - user will be able to assign colors to groups
 * [ ] Return button  
 * [ ] Save all button - saving all colors as string
+* [ ] code refactor
 * [x] color generator performance check
 * [x] HTML5 syntax
 * [x] Responsive design
