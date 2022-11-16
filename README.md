@@ -10,7 +10,7 @@ Designed for mobile, built for everyone.
 * locally saving colors
 * enjoyable experience
 * animations
-* responsive design [almost done]
+* responsive design
 
 ## **Major challenges** 💪🏼
 * designing sidebarManager object that loads colors in real time (while scrolling), manage added/deleted colors, manage toolbar nodes quantity,
@@ -18,11 +18,13 @@ Designed for mobile, built for everyone.
 
 
 ## **To-do** 🏆
-* [ ] color generator performance check
 * [ ] key shortcut - notification
+  * [ ] use tab to show sidebar 
 * [ ] Color profiles - user will be able to assign colors to groups
 * [ ] Return button  
 * [ ] Save all button - saving all colors as string
+* [ ] code refactor
+* [x] color generator performance check
 * [x] HTML5 syntax
 * [x] Responsive design
   * [x] Mobile
@@ -39,6 +41,6 @@ Designed for mobile, built for everyone.
  * [x] Trash button (after 3 removes it appears)
  
 
-## **Important questions**
+## **Important questions** 
 * Is delegating events by .scrollable-sidebar better in case of optimalization than adding event listeners to each block-box?
   **I guess it is**.
