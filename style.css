@@ -91,9 +91,9 @@
     padding: 1em;
     border-radius: 0.75rem;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-    margin-top: 11rem; 
+    margin-top: 11rem;
     margin-bottom: auto;
-    will-change: transform;    
+    will-change: transform;
   }
 
   .color-block-animation {
@@ -122,11 +122,11 @@
   /*----------*/
 
   .container-copy-add {
-    width: 11.5rem; 
+    width: 11.5rem;
     height: 3.45rem;
     background-color: white;
     display: flex;
-    
+
 
     border-radius: 0.5rem;
     border: 2px solid black;
@@ -142,7 +142,7 @@
 
     background: none;
   }
-    
+
     .copy-add-button:active {
     background: yellow;
   }
@@ -162,8 +162,8 @@
   .fa-check{
     font-size: 1.2rem;
   }
-  
-  
+
+
   /* ------ */
   /* BUTTON */
   /* ------ */
@@ -185,7 +185,7 @@
     margin-bottom: 3em;
     border-radius: 0.4rem;
     position: relative;
-    
+
     font-weight: 700;
     font-size: 1.2rem;
     color: #1e2731;
@@ -203,13 +203,13 @@
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: inherit;
   }
-  
 
 
+
   /* SHELTER */
   /* SHELTER */
   /* SHELTER */
-  
+
   .toggle {
     height: var(--toggle-height);
     width: 24px;
@@ -219,7 +219,7 @@
     z-index: 101;
     top:50%;
     right: 0%;
-    
+
     transform:  translateY(-50%) ;
     transition: all var(--sidebar-animation-time) var(--sidebar-animation-function);
 
@@ -337,6 +337,8 @@
     overflow: hidden;
   }
 
+  .block-inner:hover {cursor: pointer}
+
 
   /* BG-DIMM */
   /* BG-DIMM */
@@ -392,7 +394,7 @@
   .pop-up-message span::selection {
     background-color: white;
   }
-  
+
 
   @keyframes pop-up-animation {
     40%,70%{
@@ -445,11 +447,11 @@
     visibility: visible;
     animation: removal 500ms linear 50ms 1;
   }
-  
+
   @keyframes removal {
     100%{
       transform: scale(12);
-    }    
+    }
   }
 
   .notransition {
@@ -488,7 +490,7 @@
   /* IN-PROGRESS */
   /* IN-PROGRESS */
 
-  
+
 
   @media screen and (min-width: 680px){
     .button-generator {
@@ -501,12 +503,12 @@
       font-size: 1.5em;
     }
 
-    .container-copy-add { 
-      width: 14rem; 
+    .container-copy-add {
+      width: 14rem;
       height: 4rem;
     }
 
-    
+
     .color-block {
       margin-top: 15rem;
       min-width: 15rem;
@@ -570,9 +572,9 @@
     .add,.copy{
       font-size: 1.7rem;
     }
-    
-    .container-copy-add { 
-      width: 16rem; 
+
+    .container-copy-add {
+      width: 16rem;
       height: 4.2rem;
     }
 
@@ -586,7 +588,7 @@
       grid-template-columns: repeat(auto-fill, 90px);
       grid-template-rows: repeat(auto-fill, 90px);
     }
-    
+
     .block-outer {
       width: 100%;
       height: 90px;
@@ -607,4 +609,3 @@
   }
 }
 
-  
