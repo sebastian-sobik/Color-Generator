@@ -3,21 +3,22 @@ new ClipboardJS('.copyAPI');
 
 
 const defaultColor = "8370F4";
-let limit = 10;
 const delay = 300;
 const height = 700;
+
+let limit = 10;
+let scrollTopGlobal = 0;
+let wait = false;
+let isAnimating = false;
 
 if(window.matchMedia('screen and (min-width: 1280px)').matches){
     limit = 50;
 }
 
-let scrollTopGlobal = 0;
-let wait = false;
-let isAnimating = false;
 
 
-const creator = {  
-    
+const creator = {
+
     createColorDiv(hex = defaultColor) {
 
         const outer = document.createElement("div");
@@ -25,12 +26,12 @@ const creator = {
         const inner = this.createInner(hex)
 
         outer.classList.add("block-outer");
-        
+
         inner.append(removal);
         outer.append(inner);
 
         return outer;
-        
+
     },
 
     createRemoval() {
@@ -55,8 +56,8 @@ const creator = {
 const view = {
     isCopyToggled : false,
     isAddToggled : false,
-    isSidebarToggled: false,  
-    isTrashToggled: false,  
+    isSidebarToggled: false,
+    isTrashToggled: false,
 
 
     changeSquareClr(hex = defaultColor) {
@@ -70,22 +71,22 @@ const view = {
     },
 
     toggleCopyButton() {
-        
+
         const leftButtonImg = document.querySelector(".copy div");
 
         ["fa-check", "fa-solid", "fa-copy"].forEach(element => { leftButtonImg.classList.toggle(element); });
 
-        this.isCopyToggled = !this.isCopyToggled; 
+        this.isCopyToggled = !this.isCopyToggled;
 
     },
 
     toggleAddButton() {
-        
+
         const rightButtonImg = document.querySelector(".add div");
-        
+
         ["fa-check", "fa-solid", "fa-plus"].forEach(element => { rightButtonImg.classList.toggle(element); });
 
-        this.isAddToggled = !this.isAddToggled; 
+        this.isAddToggled = !this.isAddToggled;
 
     },
 
@@ -100,7 +101,7 @@ const view = {
 
     },
 
-        toggleSidebarButton() {        
+        toggleSidebarButton() {
             const sidebarArrow = document.querySelector(".arrow-icon-toggle");
             sidebarArrow.classList.toggle("ACTIVE-arrow-icon-toggle");
 
@@ -114,7 +115,7 @@ const view = {
         } ,
 
     displayCopiedColor(hex = defaultColor) {
-        
+
         const pop_up_color_box = document.querySelector(".pop-up-message div");
         pop_up_color_box.style.backgroundColor = `#${hex}`;
 
@@ -148,7 +149,7 @@ const view = {
         trash.classList.toggle("trash-hidden");
         this.isTrashToggled = !this.isTrashToggled;
     },
-    
+
     getIsCopyToggled() {return this.isCopyToggled},
     getIsAddToggled() {return this.isAddToggled},
     getIsSidebarToggled() {return this.isSidebarToggled},
@@ -162,13 +163,13 @@ const view = {
 
 
 const sidebarManager = {
-    indexOfFirstDisplayedColor : 0, 
-    indexOfLastDisplayedColor  : 0,  
+    indexOfFirstDisplayedColor : 0,
+    indexOfLastDisplayedColor  : 0,
     blocksToAdd  : 5,
     displayLimit : limit,
     colors : [],
     sidebar: document.querySelector(".scrollable-flex"),
-    
+
     updateIndexFirst(index = 0) {
         this.indexOfFirstDisplayedColor = index;
         view.updateRangeNumber(index+1, this.indexOfLastDisplayedColor+1);
@@ -185,7 +186,7 @@ const sidebarManager = {
         if(indexOfLastDisplayedColor < colorsLength - 1)
         {
             const from = indexOfLastDisplayedColor + 1;
-            const to = ((indexOfLastDisplayedColor + blocksToAdd) >= colorsLength) 
+            const to = ((indexOfLastDisplayedColor + blocksToAdd) >= colorsLength)
                                     ?  colorsLength - 1 :  (indexOfLastDisplayedColor + blocksToAdd);
             this.addBlockUsingRange(from, to, false);
             this.updateIndexLast(to);
@@ -197,8 +198,8 @@ const sidebarManager = {
 
         if(indexOfFirstDisplayedColor > 0)
         {
-            const from = ((indexOfFirstDisplayedColor - blocksToAdd) > 0) 
-                                                  ? (indexOfFirstDisplayedColor - blocksToAdd) : 0;  
+            const from = ((indexOfFirstDisplayedColor - blocksToAdd) > 0)
+                                                  ? (indexOfFirstDisplayedColor - blocksToAdd) : 0;
 
             const to = indexOfFirstDisplayedColor - 1;
             this.addBlockUsingRange(from, to, true);
@@ -208,20 +209,20 @@ const sidebarManager = {
 
     addBlockUsingRange(from, to, addBEFORE = false) {
         const {sidebar} = this;
-        
+
         if(addBEFORE)
         {
             for (let index = to; index >= from; index--) {
                 const colorBlock  = this.colors[index];
                 if(colorBlock != null)
-                    sidebar.append(colorBlock);            
+                    sidebar.append(colorBlock);
             }
         }
         else {
             for (let index = from; index <= to; index++) {
                 const colorBlock  = this.colors[index];
                 if(colorBlock != null)
-                    sidebar.prepend(colorBlock);            
+                    sidebar.prepend(colorBlock);
             }
         }
 
@@ -229,7 +230,7 @@ const sidebarManager = {
 
     resetSidebar(){
         const {sidebar} = this;
-        
+
         while(sidebar.childElementCount>0)
             sidebar.childNodes[0].remove();
 
@@ -249,7 +250,7 @@ const sidebarManager = {
         let lastIndex = this.indexOfLastDisplayedColor;
         let newLastIndex = this.colors.length - 1;
 
-        if(newLastIndex === 0) 
+        if(newLastIndex === 0)
         {
             this.addBlockUsingRange(0, 0);
             sidebarManager.updateIndexLast(newLastIndex);
@@ -276,7 +277,7 @@ const sidebarManager = {
         const sidebarElCount = sidebar.childElementCount;
 
         if(sidebarElCount > displayLimit){
-            
+
             if(program.scrolledDown){
                 for(let index = sidebarElCount ; index > displayLimit - 1 ; index--)
                     sidebar.firstChild.remove();
@@ -310,7 +311,7 @@ const program = {
         let hex = "";
 
         while ( hex.length < 6 ) {
-            hex += (Math.round(Math.random() * 15)).toString(16) 
+            hex += (Math.round(Math.random() * 15)).toString(16)
           }
           return hex.toUpperCase();
     },
@@ -331,7 +332,7 @@ const program = {
             view.toggleCopyButton();
         }
     },
-    
+
     Add(){
         if(!view.getIsAddToggled()){
             const block = creator.createColorDiv(this.mainBlockHex);
@@ -367,7 +368,7 @@ const program = {
 
             view.toggleSidebar();
         }
-            
+
     },
 
     scrollReset() {
@@ -389,18 +390,18 @@ const listeners = {
 
             localStorage.setItem("colors", JSON.stringify(allColors()) || []);
             sessionStorage.setItem("colorNow", program.mainBlockHex);
-        
+
         }, false);
-    
+
         window.addEventListener("load", function(){
-        
+
             const colors = JSON.parse(localStorage.getItem("colors"));
-        
+
             colors.forEach(element => {
                 const object = creator.createColorDiv(element);
                 sidebarManager.colors.push(object);
             });
-        
+
             const savedHex = sessionStorage.getItem("colorNow");
             if(savedHex){
                 view.loadNewColor(savedHex);
@@ -420,7 +421,7 @@ const listeners = {
             }
             else if(e.code === "KeyC")
             {
-                program.Copy();
+                document.querySelector(".copy").click();
             }
         });
 
@@ -434,7 +435,7 @@ const listeners = {
         copyButton.addEventListener("click", ()=>{
             program.Copy();
         });
-        
+
     },
 
     GeneratorListeners(){
@@ -499,7 +500,7 @@ const listeners = {
 
     ColorBlockListeners(){
         const colorBlock = document.querySelector(".color-block");
-        
+
         colorBlock.addEventListener("animationend", ()=>{
             colorBlock.classList.remove("color-block-animation");
             isAnimating = false;
@@ -508,12 +509,12 @@ const listeners = {
 
     SidebarListeners(){
         const sidebar = document.querySelector(".scrollable-flex");
-        
+
         sidebar.addEventListener("scroll", (e)=>{
-            
+
             const scrollTop = e.target.scrollTop;
             const scrollTopMax = e.target.scrollHeight;
-        
+
             if(!wait){
 
                 program.isScrolled = false;
@@ -546,7 +547,7 @@ const listeners = {
                         setTimeout(()=>{wait = false}, delay);
                     }
                 }
-            
+
             }
             scrollTopGlobal = scrollTop;
 
@@ -583,11 +584,11 @@ const listeners = {
 
     ApplyListeners(){
         for (const key in this)
-        { 
+        {
             if(key === "ApplyListeners")
                 continue;
             this[key]();
-        } 
+        }
     },
 
 }
@@ -598,7 +599,7 @@ function allColors() {
     const sidebarManagerColorBlocks = sidebarManager.colors;
 
     sidebarManagerColorBlocks.forEach(element => {
-        if(element != null) 
+        if(element != null)
             colors.push(rgb2hex(element.firstChild.style.backgroundColor));
     });
 
@@ -620,7 +621,7 @@ class ClickAndHold {
         ["mousedown", "touchstart"].forEach(type => {
             this.parent.addEventListener(type, this._onHoldStart.bind(this)); //!
         });
- 
+
         ["mouseup", "mouseleave", "mouseout", "touchend", "touchcancel"].forEach(type => {
             this.parent.addEventListener(type, this._onHoldEnd.bind(this)); //!
         });
